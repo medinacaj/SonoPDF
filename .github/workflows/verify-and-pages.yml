@@ -1,0 +1,45 @@
+name: Verificar y publicar SonoPDF
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+concurrency:
+  group: pages
+  cancel-in-progress: true
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verificar archivos obligatorios
+        run: |
+          test -f dist/index.html
+          test -f dist/app.mjs
+          test -f dist/styles.css
+          test -f dist/pdf-loader.mjs
+          test -f dist/reader-core.mjs
+          test -f dist/vendor/pdfjs/legacy/build/pdf.mjs
+          test -f dist/vendor/pdfjs/legacy/build/pdf.worker.mjs
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Pruebas
+        run: node --test tests/*.test.mjs
+      - name: Preparar sitio
+        run: touch dist/.nojekyll
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+  deploy:
+    needs: verify
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
