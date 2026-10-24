@@ -4,6 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#e5322d">
+  <script>try{var t=localStorage.getItem('sonopdf-theme')}catch(e){}document.documentElement.dataset.theme=t==='dark'||t==='light'?t:matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'</script>
   <meta name="description" content="Escucha tus PDF en voz alta. Elige una voz, ajusta la velocidad y sigue la lectura desde tu móvil u ordenador.">
   <title>SonoPDF · Lector de PDF en voz alta</title>
   <link rel="icon" type="image/svg+xml" href="./icon.svg">
@@ -22,6 +23,8 @@
 <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3 4 6v6c0 5 8 9 8 9s8-4 8-9V6Zm-4 9 3 3 5-6"/></symbol>
 <symbol id="i-chevron" viewBox="0 0 24 24"><path d="m9 5 7 7-7 7"/></symbol>
 <symbol id="i-help" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9 9a3 3 0 0 1 6 0c0 2-3 2-3 4m0 3h.01"/></symbol>
+<symbol id="i-moon" viewBox="0 0 24 24"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5Z"/></symbol>
+<symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.9 4.9l1.4 1.4m11.4 11.4 1.4 1.4M2 12h2m16 0h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></symbol>
 <symbol id="i-close" viewBox="0 0 24 24"><path d="m6 6 12 12M6 18 18 6"/></symbol>
 <symbol id="i-voice" viewBox="0 0 24 24"><path d="M12 3a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V6a3 3 0 0 0-3-3ZM5 11a7 7 0 0 0 14 0m-7 7v3"/></symbol>
 <symbol id="i-gauge" viewBox="0 0 24 24"><path d="M4 18a9 9 0 1 1 16 0M12 14l4-5"/><circle cx="12" cy="14" r="1.5"/></symbol>
@@ -31,7 +34,7 @@
 <a class="skip-link" href="#reader">Ir al lector</a>
 <header class="site-header">
   <a href="./" class="brand" aria-label="SonoPDF, inicio"><img src="./icon.svg" width="40" height="40" alt=""><span>Sono<span class="brand-pdf">PDF</span></span></a>
-  <button id="help" class="help-button" aria-label="Ayuda"><svg class="icon"><use href="#i-help"/></svg><span>Ayuda</span></button>
+  <div class="header-actions"><button id="theme-toggle" class="help-button theme-toggle" aria-label="Activar modo oscuro"><svg class="icon"><use href="#i-moon"/></svg></button><button id="help" class="help-button" aria-label="Ayuda"><svg class="icon"><use href="#i-help"/></svg><span>Ayuda</span></button></div>
 </header>
 <main class="shell">
   <div class="intro">

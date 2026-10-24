@@ -358,3 +358,25 @@ $('close-help').addEventListener('click',()=>dialog.close());
 $('help-done').addEventListener('click',()=>dialog.close());
 dialog.addEventListener('click',event => {if(event.target===dialog){const r=dialog.getBoundingClientRect();if(event.clientX<r.left||event.clientX>r.right||event.clientY<r.top||event.clientY>r.bottom)dialog.close();}});
 window.addEventListener('pagehide',()=>{savePosition();player.pause();loadController?.abort();});
+// Theme: follows the device until the reader picks the other one with the header toggle.
+const THEME_KEY = 'sonopdf-theme';
+const darkQuery = matchMedia('(prefers-color-scheme: dark)');
+let themeChoice = null;
+try { const value = localStorage.getItem(THEME_KEY); if (value === 'dark' || value === 'light') themeChoice = value; } catch { /* Follow the device. */ }
+const deviceTheme = () => darkQuery.matches ? 'dark' : 'light';
+function applyTheme() {
+  const theme = themeChoice || deviceTheme();
+  document.documentElement.dataset.theme = theme;
+  $('theme-toggle').setAttribute('aria-label', theme === 'dark' ? 'Activar modo claro' : 'Activar modo oscuro');
+  $('theme-toggle').querySelector('use').setAttribute('href', theme === 'dark' ? '#i-sun' : '#i-moon');
+  document.querySelector('meta[name=theme-color]').content = theme === 'dark' ? '#15111a' : '#e5322d';
+}
+$('theme-toggle').addEventListener('click', () => {
+  const next = (themeChoice || deviceTheme()) === 'dark' ? 'light' : 'dark';
+  // Picking what the device already uses means "follow the device" again.
+  themeChoice = next === deviceTheme() ? null : next;
+  try { if (themeChoice) localStorage.setItem(THEME_KEY, themeChoice); else localStorage.removeItem(THEME_KEY); } catch { /* The choice lasts for this visit. */ }
+  applyTheme();
+});
+darkQuery.addEventListener('change', applyTheme);
+applyTheme();
