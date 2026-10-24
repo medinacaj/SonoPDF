@@ -31,13 +31,17 @@ export class SpeechPlayer {
     createUtterance = text => new globalThis.SpeechSynthesisUtterance(text),
     onChange = () => {},
     onError = () => {},
+    onBoundary = () => {},
   } = {}) {
     this.synth = synth;
     this.createUtterance = createUtterance;
     this.onChange = onChange;
     this.onError = onError;
+    this.onBoundary = onBoundary;
     this.chunks = [];
     this.index = 0;
+    /** Character offset reached within the current chunk, from word boundary events. */
+    this.charIndex = 0;
     this.status = 'ready';
     this.rate = 1;
     this.voice = null;
@@ -111,6 +115,7 @@ export class SpeechPlayer {
     // Invalidate first: browser cancel() may synchronously dispatch old callbacks.
     this._generation++;
     this._utterance = null;
+    this.charIndex = 0;
     try { this.synth?.cancel(); } catch { /* Failed cancellation must not revive callbacks. */ }
   }
 
@@ -127,6 +132,7 @@ export class SpeechPlayer {
       return;
     }
     const generation = this._generation;
+    this.charIndex = 0;
     try {
       const utterance = this.createUtterance(this.chunks[this.index].text);
       utterance.rate = this.rate;
@@ -144,6 +150,11 @@ export class SpeechPlayer {
           this.status = 'ended';
           this.onChange();
         }
+      };
+      utterance.onboundary = event => {
+        if (!isCurrent() || !Number.isFinite(event?.charIndex)) return;
+        this.charIndex = event.charIndex;
+        this.onBoundary();
       };
       utterance.onerror = () => {
         if (isCurrent()) this._fail('No se pudo reproducir la voz. Pulsa reproducir para volver a intentarlo.');

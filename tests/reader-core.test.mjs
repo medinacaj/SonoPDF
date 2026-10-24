@@ -266,3 +266,22 @@ test('starting playback cancels leftover speech and resumes a paused engine firs
   assert.deepEqual(calls, ['resume', 'speak']);
   assert.equal(h.player.status, 'playing');
 });
+
+test('word boundaries advance the position within the chunk and reset when moving on', () => {
+  let boundaries = 0;
+  const h = harness();
+  h.player.onBoundary = () => boundaries++;
+  h.player.load(chunks);
+  h.player.play();
+  h.spoken[0].onboundary({ charIndex: 8 });
+  assert.equal(h.player.charIndex, 8);
+  assert.equal(boundaries, 1);
+  h.spoken[0].onend();
+  assert.equal(h.player.index, 1);
+  assert.equal(h.player.charIndex, 0);
+  h.spoken[0].onboundary({ charIndex: 3 });
+  assert.equal(h.player.charIndex, 0, 'stale utterances must not move the position');
+  assert.equal(boundaries, 1);
+  h.player.seek(2);
+  assert.equal(h.player.charIndex, 0);
+});

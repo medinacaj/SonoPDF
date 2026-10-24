@@ -19,12 +19,16 @@ let loadGeneration = 0;
 let loadController = null;
 let lastHighlighted = -1;
 let lastStatus = '';
+let scrubbing = false;
+const PROGRESS_STEPS = 1000;
+const WORDS_PER_MINUTE = 160;
 const canSpeak = !!(window.speechSynthesis && window.SpeechSynthesisUtterance);
 $('speech-warning').hidden = canSpeak;
 const player = new SpeechPlayer({
   synth: window.speechSynthesis,
   onChange: updatePlayback,
   onError: message => showMessage(message, 'error'),
+  onBoundary: updateProgress,
 });
 
 function showMessage(text, kind = '') {
@@ -40,6 +44,67 @@ function savePosition() {
   positions[currentDoc.fingerprint] = { index: player.index, page: visiblePage, completed: player.status === 'ended', at: Date.now() };
   const recent = Object.fromEntries(Object.entries(positions).sort((a,b) => (b[1]?.at || 0) - (a[1]?.at || 0)).slice(0,30));
   storage.set('avv-positions', recent);
+}
+const formatRate = rate => `${String(rate).replace('.', ',')}×`;
+function formatTime(seconds) {
+  const total = Math.max(0, Math.round(seconds));
+  return `${Math.floor(total / 60)}:${String(total % 60).padStart(2, '0')}`;
+}
+function totalSeconds() {
+  return currentDoc ? currentDoc.wordCount / (WORDS_PER_MINUTE * player.rate) * 60 : 0;
+}
+/** Reading position as a 0–1 fraction of the document's characters. */
+function fractionAt(index, charIndex = 0) {
+  if (!currentDoc?.totalChars) return 0;
+  const within = Math.min(charIndex, currentDoc.chunks[index]?.text.length || 0);
+  return Math.min(1, (currentDoc.offsets[index] + within) / currentDoc.totalChars);
+}
+function chunkAtFraction(fraction) {
+  const target = fraction * currentDoc.totalChars;
+  let index = 0;
+  while (index + 1 < currentDoc.offsets.length && currentDoc.offsets[index + 1] <= target) index++;
+  return index;
+}
+function setProgressBar(fraction) {
+  $('progress').value = Math.round(fraction * PROGRESS_STEPS);
+  $('progress').style.setProperty('--progress', `${fraction * 100}%`);
+  const total = totalSeconds();
+  $('progress-label').textContent = currentDoc?.chunks.length ? `${formatTime(fraction * total)} / ${formatTime(total)}` : '0:00';
+}
+function updateProgress() {
+  // While the finger is on the slider, the preview belongs to the user.
+  if (scrubbing) return;
+  const hasText = !!currentDoc?.chunks.length;
+  const fraction = !hasText ? 0 : player.status === 'ended' ? 1 : fractionAt(player.index, player.charIndex);
+  setProgressBar(fraction);
+  const state = { ready: 'Listo para escuchar', playing: 'Leyendo', paused: 'En pausa', ended: 'Lectura completada' }[player.status];
+  $('playback-status').textContent = hasText ? `${state} · Fragmento ${player.index + 1} de ${player.chunks.length}` : currentDoc ? 'No hay texto disponible para escuchar' : 'Esperando tu documento';
+  $('progress').setAttribute('aria-valuetext', hasText ? `${formatTime(fraction * totalSeconds())} de ${formatTime(totalSeconds())}, fragmento ${player.index + 1} de ${player.chunks.length}` : 'Sin documento');
+}
+function previewScrub() {
+  if (!currentDoc?.chunks.length) return;
+  scrubbing = true;
+  const fraction = Number($('progress').value) / PROGRESS_STEPS;
+  const index = chunkAtFraction(fraction);
+  setProgressBar(fraction);
+  $('playback-status').textContent = `Suelta para ir al fragmento ${index + 1} de ${currentDoc.chunks.length}`;
+}
+function commitScrub() {
+  if (!scrubbing) return;
+  scrubbing = false;
+  if (currentDoc?.chunks.length) seekTo(chunkAtFraction(Number($('progress').value) / PROGRESS_STEPS));
+  updateProgress();
+}
+function setRate(rate) {
+  settings.rate = rate;
+  $('speed').value = String(rate);
+  player.configure({ rate });
+  saveSettings();
+}
+function toggleRateMenu(open = $('rate-menu').hidden) {
+  $('rate-menu').hidden = !open;
+  $('player-rate').setAttribute('aria-expanded', String(open));
+  if (open) $('rate-menu').querySelector('[aria-pressed=true]')?.focus();
 }
 function renderPage() {
   if (!currentDoc || renderedPage === visiblePage) return;
@@ -86,18 +151,14 @@ function updatePlayback() {
   $('previous').disabled = !hasText || player.index <= 0 || busy;
   $('next').disabled = !hasText || player.index >= player.chunks.length - 1 || busy;
   $('progress').disabled = !hasText || busy;
-  $('progress').max = Math.max(0, player.chunks.length - 1);
-  $('progress').value = player.index;
-  const progress = hasText ? (player.status === 'ended' ? 100 : Math.round(player.index / player.chunks.length * 100)) : 0;
-  $('progress').style.setProperty('--progress', `${progress}%`);
-  $('progress-label').textContent = `${progress} %`;
-  const state = { ready: 'Listo para escuchar', playing: 'Leyendo', paused: 'En pausa', ended: 'Lectura completada' }[player.status];
-  $('playback-status').textContent = hasText ? `${state} · Fragmento ${player.index + 1} de ${player.chunks.length}` : currentDoc ? 'No hay texto disponible para escuchar' : 'Esperando tu documento';
-  $('progress').setAttribute('aria-valuetext', hasText ? `Fragmento ${player.index + 1} de ${player.chunks.length}` : 'Sin documento');
-  $('player-rate').textContent = `${String(player.rate).replace('.', ',')}×`;
+  updateProgress();
+  const rateLabel = formatRate(player.rate);
+  $('player-rate').textContent = rateLabel;
+  $('player-rate').setAttribute('aria-label', `Velocidad: ${rateLabel}. Cambiar velocidad`);
+  document.querySelectorAll('[data-rate]').forEach(button => button.setAttribute('aria-pressed', String(Number(button.dataset.rate) === player.rate)));
   if (currentDoc) {
     const words = currentDoc.wordCount;
-    $('time-estimate').textContent = words ? `≈ ${Math.max(1,Math.ceil(words / (160 * player.rate)))} min` : 'Sin texto';
+    $('time-estimate').textContent = words ? `≈ ${Math.max(1,Math.ceil(words / (WORDS_PER_MINUTE * player.rate)))} min` : 'Sin texto';
     $('time-estimate').title = 'Duración total estimada; depende de la voz elegida';
   }
   if (lastHighlighted !== player.index || lastStatus !== player.status) {
@@ -141,7 +202,10 @@ function openDocument({ name, pages, fingerprint, isDemo = false }) {
   const saved = !isDemo && positions?.[fingerprint];
   const index = saved && !saved.completed && Number.isInteger(saved.index) ? Math.max(0,Math.min(chunks.length - 1,saved.index)) : 0;
   visiblePage = saved && !saved.completed && Number.isInteger(saved.page) ? Math.max(0,Math.min(pages.length - 1,saved.page)) : chunks[index]?.page || 0;
-  currentDoc = { name, pages, fingerprint, isDemo, chunks, wordCount:pages.join(' ').trim().split(/\s+/u).filter(Boolean).length };
+  const offsets = [];
+  let totalChars = 0;
+  for (const chunk of chunks) { offsets.push(totalChars); totalChars += chunk.text.length + 1; }
+  currentDoc = { name, pages, fingerprint, isDemo, chunks, offsets, totalChars, wordCount:pages.join(' ').trim().split(/\s+/u).filter(Boolean).length };
   renderedPage = -1;
   document.body.classList.add('has-doc');
   $('empty-state').hidden = true;
@@ -247,14 +311,21 @@ $('play').addEventListener('click', () => {
 });
 $('previous').addEventListener('click',() => seekTo(player.index-1));
 $('next').addEventListener('click',() => seekTo(player.index+1));
-$('progress').addEventListener('input',event => seekTo(Number(event.target.value)));
+// Dragging only previews the target; the jump happens when the slider is released.
+$('progress').addEventListener('input',previewScrub);
+$('progress').addEventListener('change',commitScrub);
+$('progress').addEventListener('blur',commitScrub);
+$('player-rate').addEventListener('click',() => toggleRateMenu());
+document.querySelectorAll('[data-rate]').forEach(button => button.addEventListener('click',() => {
+  setRate(Number(button.dataset.rate)); toggleRateMenu(false); $('player-rate').focus();
+}));
+document.addEventListener('click',event => { if (!$('rate-menu').hidden && !event.target.closest('.rate-wrap')) toggleRateMenu(false); });
+$('rate-menu').addEventListener('keydown',event => { if (event.key === 'Escape') { toggleRateMenu(false); $('player-rate').focus(); } });
 $('page-select').addEventListener('change',event => changePage(Number(event.target.value)));
 $('prev-page').addEventListener('click',() => changePage(visiblePage-1));
 $('next-page').addEventListener('click',() => changePage(visiblePage+1));
 $('speed').value = String(settings.rate);
-$('speed').addEventListener('change',event => {
-  settings.rate=Number(event.target.value); player.configure({rate:settings.rate}); saveSettings();
-});
+$('speed').addEventListener('change',event => setRate(Number(event.target.value)));
 $('voice').addEventListener('change',event => {
   settings.voiceURI=event.target.value;
   const voice=voices.find(v => v.voiceURI === settings.voiceURI) || null;

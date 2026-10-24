@@ -118,7 +118,17 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;bac
 .round-button .icon{width:18px;height:18px;fill:currentColor}
 .player-meta{display:flex;align-items:center;gap:7px;font-size:12px;color:var(--muted)}
 .player-meta .icon{width:16px;height:16px;color:var(--violet)}
-.player-rate{justify-self:end;font-size:13px;font-weight:750;color:var(--orange-text);font-variant-numeric:tabular-nums;padding:6px 11px;background:var(--orange-soft);border-radius:999px}
+.rate-wrap{position:relative;justify-self:end}
+.player-rate{display:inline-flex;align-items:center;justify-content:center;min-width:52px;min-height:40px;border:2px solid transparent;font-size:14px;font-weight:800;color:var(--orange-text);font-variant-numeric:tabular-nums;padding:6px 12px;background:var(--orange-soft);border-radius:999px}
+.player-rate::after{content:"";width:0;height:0;margin-left:5px;border:4px solid transparent;border-top:5px solid currentColor;border-bottom:0}
+.player-rate:hover,.player-rate[aria-expanded=true]{border-color:var(--orange)}
+.rate-menu{position:absolute;right:0;bottom:calc(100% + 10px);z-index:30;width:190px;padding:8px;background:#fff;border:1px solid var(--border);border-radius:18px;box-shadow:0 18px 40px -12px #1f1a2450;display:flex;flex-direction:column;gap:2px}
+.rate-title{font-size:11px;font-weight:750;letter-spacing:.8px;text-transform:uppercase;color:var(--muted);padding:4px 10px 6px}
+.rate-menu button{display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:40px;padding:6px 12px;border:0;border-radius:12px;background:transparent;font-size:15px;font-weight:750;font-variant-numeric:tabular-nums;text-align:left}
+.rate-menu button span{font-size:12px;font-weight:500;color:var(--muted)}
+.rate-menu button:hover{background:var(--orange-soft)}
+.rate-menu button[aria-pressed=true]{background:var(--orange);color:#fff}
+.rate-menu button[aria-pressed=true] span{color:#fff}
 
 /* Settings */
 .settings-card{padding:20px}
@@ -160,7 +170,7 @@ dialog>p{font-size:14px;color:var(--muted);margin:12px 0}
 #help-done{width:100%}
 
 /* Tablet */
-@media(max-width:1000px){.workspace{grid-template-columns:minmax(0,1fr) 280px;gap:16px}.document-name{max-width:230px}.pill{display:none}.player-meta{display:none}.transport{grid-column:2}.player-rate{grid-column:3}}
+@media(max-width:1000px){.workspace{grid-template-columns:minmax(0,1fr) 280px;gap:16px}.document-name{max-width:230px}.pill{display:none}.player-meta{display:none}.transport{grid-column:2}.rate-wrap{grid-column:3}}
 
 /* Mobile: compact layout with a player fixed to the bottom of the screen */
 @media(max-width:760px){
@@ -191,7 +201,7 @@ dialog>p{font-size:14px;color:var(--muted);margin:12px 0}
   .player{position:fixed;left:0;right:0;bottom:0;z-index:20;padding:10px 16px calc(14px + env(safe-area-inset-bottom));border:0;border-radius:24px 24px 0 0;background:#fff;box-shadow:0 -10px 30px -12px #1f1a2440}
   .player-controls{display:flex;align-items:center;gap:8px}
   .transport{flex:1;min-width:0;justify-content:center;gap:10px}
-  .player-rate{flex-shrink:0}
+  .rate-wrap{flex-shrink:0}
   .play-button{min-width:0;padding:12px 20px}
   /* Once a document is open, the two big tiles shrink to a single compact row. */
   .has-doc .intro{display:none}

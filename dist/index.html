@@ -65,11 +65,11 @@
       <div class="reader-bottom"><svg class="icon"><use href="#i-shield"/></svg><span id="reader-note">Tu PDF no sale de tu dispositivo.</span></div>
       <div class="player" aria-label="Controles de lectura">
         <div class="progress-row"><span id="playback-status">Esperando tu documento</span><span id="progress-label">0 %</span></div>
-        <label class="sr-only" for="progress">Posición de lectura por fragmento</label><input type="range" id="progress" min="0" max="0" value="0" disabled>
+        <label class="sr-only" for="progress">Posición de lectura: arrastra para avanzar o retroceder</label><input type="range" id="progress" min="0" max="1000" step="1" value="0" disabled>
         <div class="player-controls">
           <div class="player-meta"><svg class="icon"><use href="#i-headphones"/></svg><span id="time-estimate">A tu ritmo</span></div>
           <div class="transport"><button id="previous" class="round-button" aria-label="Fragmento anterior" disabled><svg class="icon"><use href="#i-prev"/></svg></button><button id="play" class="play-button" aria-label="Reproducir" disabled><svg class="icon"><use href="#i-play"/></svg><span id="play-label">Reproducir</span></button><button id="next" class="round-button" aria-label="Fragmento siguiente" disabled><svg class="icon"><use href="#i-next"/></svg></button></div>
-          <span id="player-rate" class="player-rate">1×</span>
+          <div class="rate-wrap"><button id="player-rate" class="player-rate" aria-haspopup="true" aria-expanded="false" aria-controls="rate-menu" aria-label="Velocidad: 1×">1×</button><div id="rate-menu" class="rate-menu" role="group" aria-label="Velocidad de lectura" hidden><span class="rate-title">Velocidad</span><button data-rate="0.5">0,5× <span>Muy pausada</span></button><button data-rate="0.75">0,75× <span>Pausada</span></button><button data-rate="1">1× <span>Normal</span></button><button data-rate="1.25">1,25× <span>Ágil</span></button><button data-rate="1.5">1,5× <span>Rápida</span></button><button data-rate="1.75">1,75× <span>Muy rápida</span></button><button data-rate="2">2× <span>Doble</span></button></div></div>
         </div>
       </div>
     </section>
