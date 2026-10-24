@@ -242,3 +242,27 @@ test('empty documents remain ready and never create an utterance', () => {
   assert.equal(h.player.status, 'ready');
   assert.equal(h.spoken.length, 0);
 });
+
+test('starting playback from silence speaks without cancelling first (iOS Safari drops that speech)', () => {
+  const h = harness();
+  h.player.load(chunks);
+  h.player.play();
+  assert.equal(h.cancelCount, 1, 'only the cancel from load() is expected');
+  assert.deepEqual(h.spoken.map(u => u.text), ['Primera frase.']);
+  assert.equal(h.player.status, 'playing');
+});
+
+test('starting playback cancels leftover speech and resumes a paused engine first', () => {
+  const h = harness();
+  h.player.load(chunks);
+  const calls = [];
+  h.synth.speaking = true;
+  h.synth.paused = true;
+  h.synth.resume = () => calls.push('resume');
+  const speak = h.synth.speak;
+  h.synth.speak = utterance => { calls.push('speak'); speak(utterance); };
+  h.player.play();
+  assert.equal(h.cancelCount, 2);
+  assert.deepEqual(calls, ['resume', 'speak']);
+  assert.equal(h.player.status, 'playing');
+});

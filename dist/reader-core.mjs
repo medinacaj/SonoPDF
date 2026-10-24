@@ -56,7 +56,9 @@ export class SpeechPlayer {
   play() {
     if (!this.chunks.length || this.status === 'playing') return;
     if (this.status === 'ended') this.index = 0;
-    this._cancel();
+    // iOS Safari silently drops speak() right after cancel(), so only cancel real speech.
+    if (this.synth?.speaking || this.synth?.pending) this._cancel();
+    else this._generation++;
     this._speak();
   }
 
@@ -149,7 +151,11 @@ export class SpeechPlayer {
       this.status = 'playing';
       this.onChange();
       // A consumer may synchronously pause or replace the document in onChange.
-      if (isCurrent()) this.synth.speak(utterance);
+      if (isCurrent()) {
+        // Some engines stay paused after an interruption and ignore new speech until resumed.
+        if (this.synth.paused) this.synth.resume?.();
+        this.synth.speak(utterance);
+      }
     } catch {
       if (generation === this._generation) {
         this._fail('No se pudo reproducir la voz. Pulsa reproducir para volver a intentarlo.');
