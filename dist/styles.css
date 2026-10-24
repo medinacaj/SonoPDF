@@ -151,10 +151,13 @@ select:hover{border-color:#e9c9c3}
 .font-buttons button:nth-child(3){font-size:21px}
 .font-buttons button[aria-pressed=true]{background:var(--violet);border-color:var(--violet);color:#fff}
 .settings-tip{font-size:12px;color:var(--muted);margin-top:14px;line-height:1.5}
-.site-footer{font-size:12px;color:var(--muted);padding:24px 2px 32px;text-align:center;font-size:13px}
-.credit{display:inline-flex;align-items:center;gap:6px;min-height:44px;padding:0 4px;color:var(--pdf-dark);vertical-align:middle}
-.credit:hover strong{text-decoration:underline}
-.linkedin{width:18px;height:18px;fill:#0a66c2;stroke:none;border-radius:3px}
+.site-footer{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:10px;font-size:13px;color:var(--muted);padding:24px 2px 32px;text-align:center}
+.credit{display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:5px 14px 5px 5px;border:1.5px solid #f3c5c2;border-radius:999px;background:#fff;color:var(--pdf-dark);font-size:14px;box-shadow:0 6px 16px -10px #c4221d80;transition:transform .15s,box-shadow .15s,border-color .15s}
+.credit:hover{transform:translateY(-1px);border-color:var(--pdf);box-shadow:0 10px 20px -10px #c4221daa}
+.credit-avatar{display:grid;place-items:center;width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#ff6b5a,var(--pdf) 55%,var(--orange));color:#fff}
+.credit-avatar svg{width:18px;height:18px;stroke-width:2.2}
+.credit-arrow{width:16px;height:16px;stroke-width:2.4;transition:transform .15s}
+.credit:hover .credit-arrow{transform:translate(2px,-2px)}
 
 /* Help dialog */
 .button{display:inline-flex;align-items:center;justify-content:center;gap:9px;min-height:48px;padding:12px 22px;border:0;border-radius:999px;font-size:15px;font-weight:700}
