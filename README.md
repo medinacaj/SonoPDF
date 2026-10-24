@@ -1,6 +1,6 @@
 # SonoPDF · Lector de PDF en voz alta
 
-Aplicación web en español para escuchar documentos PDF desde móvil y ordenador. El código original de Codex se identifica como **A viva voz**; SonoPDF es el nombre del repositorio y una propuesta de marca, pendiente de verificación.
+Aplicación web en español para escuchar documentos PDF desde móvil y ordenador. El código original de Codex usaba el nombre provisional «A viva voz»; el producto se llama **SonoPDF**.
 
 > **Estado de GitHub:** el repositorio contiene ya todos los archivos del ZIP original, verificados byte a byte, y las 28 pruebas pasan. Queda pendiente la verificación manual con PDF reales antes de desplegar.
 

@@ -206,7 +206,7 @@ async function loadFile(file) {
 function loadDemo() {
   ++loadGeneration; loadController?.abort(); setBusy(false);
   openDocument({ name:'El placer de escuchar',fingerprint:'demo',isDemo:true,pages:[
-    'Escuchar también es una forma de leer. A veces, solo necesitamos apartar la mirada de la pantalla y dejar que las palabras nos acompañen. Un libro, unos apuntes o ese artículo pendiente pueden encontrar un nuevo ritmo.\n\nCon A viva voz puedes elegir una voz, ajustar la velocidad y seguir el texto mientras lo escuchas. Cada fragmento se ilumina para que siempre sepas dónde estás.\n\nNo hay prisa. Puedes hacer una pausa, volver a una idea o saltar al siguiente fragmento. La lectura se adapta a ti, a tus tiempos y a tu manera de descubrir.\n\nEste texto es una demostración. Cuando quieras empezar tu propia lectura, selecciona un PDF con texto y pulsa Reproducir. Tu próxima historia ya te está esperando.'
+    'Escuchar también es una forma de leer. A veces, solo necesitamos apartar la mirada de la pantalla y dejar que las palabras nos acompañen. Un libro, unos apuntes o ese artículo pendiente pueden encontrar un nuevo ritmo.\n\nCon SonoPDF puedes elegir una voz, ajustar la velocidad y seguir el texto mientras lo escuchas. Cada fragmento se ilumina para que siempre sepas dónde estás.\n\nNo hay prisa. Puedes hacer una pausa, volver a una idea o saltar al siguiente fragmento. La lectura se adapta a ti, a tus tiempos y a tu manera de descubrir.\n\nEste texto es una demostración. Cuando quieras empezar tu propia lectura, selecciona un PDF con texto y pulsa Reproducir. Tu próxima historia ya te está esperando.'
   ] });
 }
 function refreshVoices() {
