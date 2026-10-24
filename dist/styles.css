@@ -151,7 +151,10 @@ select:hover{border-color:#e9c9c3}
 .font-buttons button:nth-child(3){font-size:21px}
 .font-buttons button[aria-pressed=true]{background:var(--violet);border-color:var(--violet);color:#fff}
 .settings-tip{font-size:12px;color:var(--muted);margin-top:14px;line-height:1.5}
-.site-footer{font-size:12px;color:var(--muted);padding:24px 2px 32px;text-align:center}
+.site-footer{font-size:12px;color:var(--muted);padding:24px 2px 32px;text-align:center;font-size:13px}
+.credit{display:inline-flex;align-items:center;gap:6px;min-height:44px;padding:0 4px;color:var(--pdf-dark);vertical-align:middle}
+.credit:hover strong{text-decoration:underline}
+.linkedin{width:18px;height:18px;fill:#0a66c2;stroke:none;border-radius:3px}
 
 /* Help dialog */
 .button{display:inline-flex;align-items:center;justify-content:center;gap:9px;min-height:48px;padding:12px 22px;border:0;border-radius:999px;font-size:15px;font-weight:700}
