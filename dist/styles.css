@@ -151,11 +151,13 @@ select:hover{border-color:#e9c9c3}
 .font-buttons button:nth-child(3){font-size:21px}
 .font-buttons button[aria-pressed=true]{background:var(--violet);border-color:var(--violet);color:#fff}
 .settings-tip{font-size:12px;color:var(--muted);margin-top:14px;line-height:1.5}
-.site-footer{font-size:12px;color:var(--muted);padding:20px 2px 28px;margin-top:8px;border-top:1px solid var(--border);text-align:center;letter-spacing:.1px}
-.credit{display:inline-flex;align-items:center;gap:2px;padding:12px 2px;color:var(--text);font-weight:600;text-decoration:underline;text-decoration-color:#d9c9c4;text-decoration-thickness:1px;text-underline-offset:3px;transition:color .15s,text-decoration-color .15s}
-.credit:hover{color:var(--pdf-dark);text-decoration-color:currentColor}
-.credit-emoji{display:inline-block;font-size:14px;margin:0 1px;vertical-align:-1px}
-.credit-arrow{width:12px;height:12px;stroke-width:2.2}
+.site-footer{display:flex;justify-content:center;padding:22px 2px 30px;margin-top:8px;border-top:1px solid var(--border)}
+.credit{display:inline-flex;align-items:center;gap:6px;min-height:40px;padding:8px 14px 8px 16px;border:1px solid var(--border);border-radius:999px;background:#ffffffcc;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);box-shadow:0 1px 2px #1f1a240d,0 6px 16px -10px #1f1a2433;font-size:12.5px;color:var(--muted);letter-spacing:.1px;transition:border-color .2s,box-shadow .2s,transform .2s}
+.credit strong{color:var(--text);font-weight:650}
+.credit-emoji{font-size:14px;line-height:1}
+.credit-arrow{width:12px;height:12px;stroke-width:2.2;color:var(--muted);margin-left:2px;transition:transform .2s,color .2s}
+.credit:hover{border-color:#e9c9c3;box-shadow:0 1px 2px #1f1a240d,0 10px 22px -12px #c4221d55;transform:translateY(-1px)}
+.credit:hover .credit-arrow{color:var(--pdf-dark);transform:translate(1px,-1px)}
 
 /* Help dialog */
 .button{display:inline-flex;align-items:center;justify-content:center;gap:9px;min-height:48px;padding:12px 22px;border:0;border-radius:999px;font-size:15px;font-weight:700}
