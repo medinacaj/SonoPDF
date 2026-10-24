@@ -151,6 +151,7 @@ function openDocument({ name, pages, fingerprint, isDemo = false }) {
   $('document-name').title = name;
   $('document-detail').textContent = `${pages.length} ${pages.length === 1 ? 'página' : 'páginas'} · ${currentDoc.wordCount.toLocaleString('es')} palabras${isDemo ? ' · Demostración' : ''}`;
   $('document-tag').textContent = isDemo ? 'EJEMPLO' : 'PDF';
+  $('choose-label').textContent = isDemo ? 'Elegir un PDF' : 'Cambiar PDF';
   $('page-select').replaceChildren(...pages.map((_,index) => {
     const option = document.createElement('option'); option.value = index; option.textContent = `${index+1} de ${pages.length}`; return option;
   }));
@@ -166,7 +167,7 @@ function setBusy(value) {
   busy = value;
   $('load-progress').hidden = !value;
   $('choose-file').setAttribute('aria-busy',String(value));
-  $('choose-file').innerHTML = value ? '<svg class="icon"><use href="#i-upload"/></svg>Cambiar archivo' : '<svg class="icon"><use href="#i-upload"/></svg>Elegir un PDF';
+  $('choose-label').textContent = value ? 'Abriendo…' : currentDoc && !currentDoc.isDemo ? 'Cambiar PDF' : 'Elegir un PDF';
   $('page-select').disabled = value;
   $('reading-text').setAttribute('aria-busy',String(value));
   // Disable clickable chunks during replacement, retaining the previous document on failure.

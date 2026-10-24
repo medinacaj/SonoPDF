@@ -2,8 +2,8 @@
 <html lang="es">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#f6f8fb">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#e5322d">
   <meta name="description" content="Escucha tus PDF en voz alta. Elige una voz, ajusta la velocidad y sigue la lectura desde tu móvil u ordenador.">
   <title>A viva voz · Lector de PDF</title>
   <link rel="icon" type="image/svg+xml" href="./icon.svg">
@@ -23,32 +23,66 @@
 <symbol id="i-chevron" viewBox="0 0 24 24"><path d="m9 5 7 7-7 7"/></symbol>
 <symbol id="i-help" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9 9a3 3 0 0 1 6 0c0 2-3 2-3 4m0 3h.01"/></symbol>
 <symbol id="i-close" viewBox="0 0 24 24"><path d="m6 6 12 12M6 18 18 6"/></symbol>
+<symbol id="i-voice" viewBox="0 0 24 24"><path d="M12 3a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V6a3 3 0 0 0-3-3ZM5 11a7 7 0 0 0 14 0m-7 7v3"/></symbol>
+<symbol id="i-gauge" viewBox="0 0 24 24"><path d="M4 18a9 9 0 1 1 16 0M12 14l4-5"/><circle cx="12" cy="14" r="1.5"/></symbol>
+<symbol id="i-text" viewBox="0 0 24 24"><path d="M4 19 9 5l5 14M6 14h6m4 5 2.5-7 2.5 7m-4.2-2.5h3.4"/></symbol>
+<symbol id="pdf-art" viewBox="0 0 48 56"><path d="M6 2h26l14 14v36a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2Z" fill="#fff" stroke="none"/><path d="M32 2v12a2 2 0 0 0 2 2h12" fill="#ffd2cf" stroke="none"/><rect x="0" y="26" width="34" height="16" rx="4" fill="#e5322d" stroke="none"/><text x="17" y="38.5" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="800" fill="#fff" stroke="none">PDF</text></symbol>
 </defs></svg>
 <a class="skip-link" href="#reader">Ir al lector</a>
 <header class="site-header">
-  <a href="./" class="brand" aria-label="A viva voz, inicio"><img src="./icon.svg" width="37" height="37" alt=""><span>A viva voz<span class="brand-dot">.</span></span></a>
-  <div class="header-right"><span class="header-label">UN PDF. OTRA FORMA DE LEER.</span><button id="help" class="button button-quiet" aria-label="Ayuda"><svg class="icon"><use href="#i-help"/></svg><span>Ayuda</span></button></div>
+  <a href="./" class="brand" aria-label="A viva voz, inicio"><img src="./icon.svg" width="40" height="40" alt=""><span>A viva voz<span class="brand-dot">.</span></span></a>
+  <button id="help" class="help-button" aria-label="Ayuda"><svg class="icon"><use href="#i-help"/></svg><span>Ayuda</span></button>
 </header>
 <main class="shell">
-  <div class="intro"><div><div class="eyebrow"><span class="little-line"></span> LECTURA A TU RITMO</div><h1>Dale voz a tus PDF.</h1><p>Tú eliges qué leer. Nosotros le damos voz.</p></div><div class="local-badge"><svg class="icon"><use href="#i-shield"/></svg><span>Tu PDF se queda<br><strong>en tu navegador</strong></span></div></div>
+  <div class="intro">
+    <h1>Dale voz a tus PDF.</h1>
+    <p>Elige un PDF, pulsa <span class="inline-play" aria-hidden="true">▶</span> y escucha.</p>
+  </div>
+  <section class="actions" aria-label="Elegir documento">
+    <div id="dropzone" class="dropzone">
+      <button id="choose-file" class="action-tile tile-pdf"><svg class="tile-art" aria-hidden="true"><use href="#pdf-art"/></svg><span class="tile-text"><strong id="choose-label">Elegir un PDF</strong><span class="tile-sub">Hasta 30 MB</span></span></button>
+      <input type="file" id="file-input" accept=".pdf,application/pdf" class="sr-only" tabindex="-1" aria-label="Seleccionar archivo PDF">
+    </div>
+    <button id="demo" class="action-tile tile-demo"><span class="tile-icon" aria-hidden="true"><svg class="icon"><use href="#i-headphones"/></svg></span><span class="tile-text"><strong>Probar con un ejemplo</strong><span class="tile-sub">Sin archivo</span></span></button>
+  </section>
+  <div id="load-progress" class="loading-state" role="status" hidden><span class="spinner"></span><span id="load-label">Abriendo tu PDF…</span></div>
   <div id="message" class="message" role="status" aria-live="polite" hidden></div>
   <div id="speech-warning" class="message warning" role="status" hidden>Este navegador no ofrece lectura en voz alta. Puedes leer el texto o abrir la app en una versión reciente de Chrome, Edge o Safari.</div>
   <div class="workspace">
     <section class="reading-card" id="reader" aria-label="Lector de documentos">
-      <div class="reader-toolbar"><div class="document-info"><span class="document-icon"><svg class="icon"><use href="#i-file"/></svg></span><div><div id="document-name" class="document-name">Tu espacio de lectura</div><div id="document-detail" class="muted small">Todo listo para tu próximo PDF</div></div></div><span id="document-tag" class="pill">SIN DOCUMENTO</span></div>
+      <div class="reader-toolbar"><div class="document-info"><svg class="document-icon" aria-hidden="true"><use href="#pdf-art"/></svg><div><div id="document-name" class="document-name">Tu espacio de lectura</div><div id="document-detail" class="muted small">Todo listo para tu próximo PDF</div></div></div><span id="document-tag" class="pill">SIN DOCUMENTO</span></div>
       <div class="page-bar" id="page-bar" hidden><label for="page-select">Página</label><select id="page-select" aria-label="Página del documento"></select><div class="page-arrows"><button id="prev-page" class="icon-button" aria-label="Página anterior"><svg class="icon flip"><use href="#i-chevron"/></svg></button><button id="next-page" class="icon-button" aria-label="Página siguiente"><svg class="icon"><use href="#i-chevron"/></svg></button></div></div>
-      <div id="empty-state" class="empty-state"><div class="document-art" aria-hidden="true"><svg class="paper-icon"><use href="#i-file"/></svg><span class="audio-bubble"><svg class="icon"><use href="#i-headphones"/></svg></span></div><div class="eyebrow">MENOS PANTALLA, MÁS HISTORIAS</div><h2>Una nueva forma<br>de seguir la lectura.</h2><p>Abre un PDF y escucha a tu ritmo.<br>El texto te acompañará, fragmento a fragmento.</p><span class="empty-footnote">Libros, apuntes, artículos… empieza por lo que quieras.</span></div>
+      <div id="empty-state" class="empty-state">
+        <svg class="hero-art" viewBox="0 0 220 150" aria-hidden="true">
+          <circle cx="40" cy="38" r="22" fill="#ffe7a3" stroke="none"/><circle cx="186" cy="112" r="26" fill="#d9f6f1" stroke="none"/><circle cx="182" cy="30" r="10" fill="#efe4ff" stroke="none"/>
+          <g transform="rotate(-6 92 76)"><path d="M62 20h46l22 22v74a4 4 0 0 1-4 4H62a4 4 0 0 1-4-4V24a4 4 0 0 1 4-4Z" fill="#fff" stroke="#f3c5c2" stroke-width="2"/><path d="M108 20v18a4 4 0 0 0 4 4h18" fill="#ffd2cf" stroke="#f3c5c2" stroke-width="2"/><path d="M70 60h44M70 72h44M70 84h30" stroke="#e8e2ec" stroke-width="5"/><rect x="48" y="94" width="50" height="22" rx="6" fill="#e5322d" stroke="none"/><text x="73" y="110" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="14" font-weight="800" fill="#fff" stroke="none">PDF</text></g>
+          <g stroke-width="5" stroke-linecap="round"><path d="M146 62v26" stroke="#ff8a00"/><path d="M158 50v50" stroke="#7c3aed"/><path d="M170 64v22" stroke="#14b8a6"/><path d="M182 58v34" stroke="#ec4899"/></g>
+        </svg>
+        <h2>Tu PDF, en voz alta.</h2>
+        <ol class="steps"><li><span class="step-dot dot-red">1</span>Elige un PDF</li><li><span class="step-dot dot-orange">2</span>Pulsa Reproducir</li><li><span class="step-dot dot-teal">3</span>Escucha y sigue el texto</li></ol>
+      </div>
       <div id="reading-text" class="reading-text" tabindex="0" aria-label="Texto del documento" hidden></div>
-      <div class="reader-bottom"><svg class="icon"><use href="#i-shield"/></svg><span id="reader-note">El archivo se procesa aquí, sin subirlo a un servidor.</span></div>
-      <div class="player" aria-label="Controles de lectura"><div class="progress-row"><span id="playback-status">Esperando tu documento</span><span id="progress-label">0 %</span></div><label class="sr-only" for="progress">Posición de lectura por fragmento</label><input type="range" id="progress" min="0" max="0" value="0" disabled><div class="player-controls"><div class="player-meta"><svg class="icon"><use href="#i-headphones"/></svg><span id="time-estimate">A tu ritmo</span></div><div class="transport"><button id="previous" class="icon-button" aria-label="Fragmento anterior" disabled><svg class="icon"><use href="#i-prev"/></svg></button><button id="play" class="play-button" aria-label="Reproducir" disabled><svg class="icon"><use href="#i-play"/></svg><span id="play-label">Reproducir</span></button><button id="next" class="icon-button" aria-label="Fragmento siguiente" disabled><svg class="icon"><use href="#i-next"/></svg></button></div><span id="player-rate" class="player-rate">1×</span></div></div>
+      <div class="reader-bottom"><svg class="icon"><use href="#i-shield"/></svg><span id="reader-note">Tu PDF no sale de tu dispositivo.</span></div>
+      <div class="player" aria-label="Controles de lectura">
+        <div class="progress-row"><span id="playback-status">Esperando tu documento</span><span id="progress-label">0 %</span></div>
+        <label class="sr-only" for="progress">Posición de lectura por fragmento</label><input type="range" id="progress" min="0" max="0" value="0" disabled>
+        <div class="player-controls">
+          <div class="player-meta"><svg class="icon"><use href="#i-headphones"/></svg><span id="time-estimate">A tu ritmo</span></div>
+          <div class="transport"><button id="previous" class="round-button" aria-label="Fragmento anterior" disabled><svg class="icon"><use href="#i-prev"/></svg></button><button id="play" class="play-button" aria-label="Reproducir" disabled><svg class="icon"><use href="#i-play"/></svg><span id="play-label">Reproducir</span></button><button id="next" class="round-button" aria-label="Fragmento siguiente" disabled><svg class="icon"><use href="#i-next"/></svg></button></div>
+          <span id="player-rate" class="player-rate">1×</span>
+        </div>
+      </div>
     </section>
-    <aside class="sidebar" aria-label="Archivo y ajustes">
-      <section class="upload-card"><div class="section-heading"><h2>Tu próxima lectura</h2><span class="step-number">01</span></div><div id="dropzone" class="dropzone"><span class="upload-icon"><svg class="icon"><use href="#i-upload"/></svg></span><p><strong>Arrastra tu PDF aquí</strong><br><span>o selecciónalo en tu dispositivo</span></p><button id="choose-file" class="button button-primary"><svg class="icon"><use href="#i-upload"/></svg>Elegir un PDF</button><span class="file-limit">Formato PDF · Hasta 30 MB</span><input type="file" id="file-input" accept=".pdf,application/pdf" class="sr-only" tabindex="-1" aria-label="Seleccionar archivo PDF"></div><div id="load-progress" class="loading-state" role="status" hidden><span class="spinner"></span><span id="load-label">Abriendo tu PDF…</span></div><div class="demo-row"><span>¿Solo quieres probar?</span><button id="demo" class="text-button">Probar con un ejemplo</button></div></section>
-      <section class="settings-card"><div class="section-heading"><h2>Hazlo a tu manera</h2><span class="step-number">02</span></div><div class="field"><label for="voice">Voz de lectura</label><select id="voice"><option value="">Voz predeterminada</option></select><p id="voice-note" class="field-note">Las voces dependen de tu dispositivo.</p></div><div class="field"><label for="speed">Velocidad <span id="speed-hint">A tu ritmo</span></label><select id="speed"><option value="0.5">0,5× · Muy pausada</option><option value="0.75">0,75× · Pausada</option><option value="1" selected>1× · Normal</option><option value="1.25">1,25× · Ágil</option><option value="1.5">1,5× · Rápida</option><option value="1.75">1,75× · Muy rápida</option><option value="2">2× · Doble velocidad</option></select></div><div class="field font-field"><label>Tamaño del texto</label><div class="font-buttons" role="group" aria-label="Tamaño del texto"><button data-font="18" aria-label="Texto pequeño" aria-pressed="false">A</button><button data-font="21" aria-label="Texto mediano" aria-pressed="true">A</button><button data-font="25" aria-label="Texto grande" aria-pressed="false">A</button></div></div><div class="settings-tip"><span class="tip-mark">i</span><p>Pausa cuando quieras.<br>Tu punto de lectura se guarda en este navegador.</p></div></section>
-    </aside>
+    <section class="settings-card" aria-labelledby="settings-title">
+      <h2 id="settings-title">Ajustes</h2>
+      <div class="setting"><span class="setting-icon icon-teal" aria-hidden="true"><svg class="icon"><use href="#i-voice"/></svg></span><div class="setting-body"><label for="voice">Voz</label><select id="voice"><option value="">Voz predeterminada</option></select><p id="voice-note" class="field-note">Las voces dependen de tu dispositivo.</p></div></div>
+      <div class="setting"><span class="setting-icon icon-orange" aria-hidden="true"><svg class="icon"><use href="#i-gauge"/></svg></span><div class="setting-body"><label for="speed">Velocidad</label><select id="speed"><option value="0.5">0,5× · Muy pausada</option><option value="0.75">0,75× · Pausada</option><option value="1" selected>1× · Normal</option><option value="1.25">1,25× · Ágil</option><option value="1.5">1,5× · Rápida</option><option value="1.75">1,75× · Muy rápida</option><option value="2">2× · Doble velocidad</option></select></div></div>
+      <div class="setting setting-inline"><span class="setting-icon icon-violet" aria-hidden="true"><svg class="icon"><use href="#i-text"/></svg></span><div class="setting-body"><span class="setting-label" id="font-label">Tamaño del texto</span><div class="font-buttons" role="group" aria-labelledby="font-label"><button data-font="18" aria-label="Texto pequeño" aria-pressed="false">A</button><button data-font="21" aria-label="Texto mediano" aria-pressed="true">A</button><button data-font="25" aria-label="Texto grande" aria-pressed="false">A</button></div></div></div>
+      <p class="settings-tip">Tu punto de lectura se guarda en este navegador.</p>
+    </section>
   </div>
-  <footer class="site-footer"><span>Hecho para leer de otra manera.</span><span>PDF con texto seleccionable <span class="footer-dot">·</span> Sin registro adicional</span></footer>
+  <footer class="site-footer"><span>PDF con texto seleccionable · Sin registro</span></footer>
 </main>
-<dialog id="help-dialog" aria-labelledby="help-title"><div class="dialog-heading"><h2 id="help-title">Tu lectura, paso a paso</h2><button id="close-help" class="icon-button" aria-label="Cerrar ayuda"><svg class="icon"><use href="#i-close"/></svg></button></div><ol><li><strong>Abre un PDF.</strong> El archivo debe tener texto seleccionable y pesar como máximo 30 MB.</li><li><strong>Elige cómo escucharlo.</strong> Selecciona una voz y la velocidad. Pulsa Reproducir para empezar.</li><li><strong>Sigue la lectura.</strong> Toca un fragmento para escucharlo. Puedes cambiar de página y avanzar o retroceder fragmentos.</li></ol><p>Al continuar después de una pausa, se repite el fragmento actual. Para recuperar tu posición otro día, vuelve a abrir el mismo PDF en este navegador.</p><p>Los PDF escaneados necesitan reconocimiento de texto (OCR), que esta versión no incluye. El orden del texto puede variar en documentos con columnas o diseños complejos.</p><div class="help-note"><strong>Sobre tus archivos y las voces</strong><p>El PDF se procesa en tu navegador y no se guarda en la app. Algunas voces usan un servicio en línea del proveedor del dispositivo y pueden enviarle el texto. La reproducción puede interrumpirse al bloquear la pantalla o cambiar de aplicación.</p></div><button id="help-done" class="button button-primary">Entendido</button></dialog>
+<dialog id="help-dialog" aria-labelledby="help-title"><div class="dialog-heading"><h2 id="help-title">Tu lectura, paso a paso</h2><button id="close-help" class="icon-button" aria-label="Cerrar ayuda"><svg class="icon"><use href="#i-close"/></svg></button></div><ol class="help-steps"><li><span class="step-dot dot-red">1</span><div><strong>Abre un PDF.</strong> El archivo debe tener texto seleccionable y pesar como máximo 30 MB.</div></li><li><span class="step-dot dot-orange">2</span><div><strong>Elige cómo escucharlo.</strong> Selecciona una voz y la velocidad. Pulsa Reproducir para empezar.</div></li><li><span class="step-dot dot-teal">3</span><div><strong>Sigue la lectura.</strong> Toca un fragmento para escucharlo. Puedes cambiar de página y avanzar o retroceder fragmentos.</div></li></ol><p>Al continuar después de una pausa, se repite el fragmento actual. Para recuperar tu posición otro día, vuelve a abrir el mismo PDF en este navegador.</p><p>Los PDF escaneados necesitan reconocimiento de texto (OCR), que esta versión no incluye. El orden del texto puede variar en documentos con columnas o diseños complejos.</p><div class="help-note"><strong>Sobre tus archivos y las voces</strong><p>El PDF se procesa en tu navegador y no se guarda en la app. Algunas voces usan un servicio en línea del proveedor del dispositivo y pueden enviarle el texto. La reproducción puede interrumpirse al bloquear la pantalla o cambiar de aplicación.</p></div><button id="help-done" class="button button-primary">Entendido</button></dialog>
 </body>
 </html>
