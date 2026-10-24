@@ -1,30 +1,50 @@
-# SonoPDF
+# SonoPDF · Lector de PDF en voz alta
 
-SonoPDF es un proyecto de aplicación para escuchar en voz alta el contenido de documentos PDF.
+Aplicación web en español para escuchar documentos PDF desde móvil y ordenador. El código original de Codex se identifica como **A viva voz**; SonoPDF es el nombre del repositorio y una propuesta de marca, pendiente de verificación.
 
-## Objetivo
+> **Estado de GitHub:** migración en curso. El ZIP original contiene la aplicación completa, pero el repositorio aún no incluye todos sus archivos. No se debe desplegar esta copia parcial como si estuviera terminada.
 
-Facilitar el acceso auditivo al contenido escrito de archivos PDF.
+## Funciones presentes en el ZIP original
 
-## Estado del proyecto
+- Lectura en voz alta de PDF con texto seleccionable (hasta 30 MB).
+- Voz y velocidad ajustables (0,5×–2×).
+- Reproducir, pausar, avanzar, retroceder y seleccionar fragmentos.
+- Recuperación de la última posición al volver a abrir el mismo PDF en el navegador.
+- Ejemplo integrado para probar sin archivo.
+- Procesamiento local con PDF.js, sin subir el PDF a un servidor de la aplicación.
 
-**Fase conceptual.** El nombre SonoPDF es una propuesta de naming; no se ha verificado todavía su disponibilidad legal o registral. No hay una implementación funcional confirmada en este repositorio.
+## Uso del proyecto original completo
 
-## Criterios del producto y la marca
+Con todos los archivos del ZIP disponibles, desde la raíz:
 
-- Nombre fácil de leer, escribir, pronunciar y recordar.
-- Asociación clara entre PDF y sonido/voz.
-- Experiencia centrada en escuchar documentos.
-- Antes de publicar comercialmente, revisar posibles conflictos de marca y denominación.
+```sh
+python -m http.server 8765 --bind 127.0.0.1 --directory dist
+```
 
-## Alcance por definir
+Abrir http://127.0.0.1:8765 en un navegador moderno.
 
-- Plataforma objetivo (web, móvil o escritorio).
-- Tecnología de extracción de texto de PDF y tratamiento de documentos escaneados.
-- Motor de síntesis de voz y controles de reproducción.
-- Gestión de archivos, privacidad, accesibilidad y experiencia de usuario.
-- Arquitectura técnica, pruebas y distribución.
+## Pruebas
 
-## Próximo paso
+```sh
+node --test
+```
 
-Definir las funcionalidades y la plataforma inicial para construir un primer prototipo funcional. Las ideas aún no aprobadas no deben presentarse como funcionalidades existentes.
+**Verificación local del ZIP (24-10-2026): 28 pruebas aprobadas, 0 fallidas.** Este resultado corresponde al archivo ZIP original, no a la copia parcial en GitHub.
+
+## Arquitectura del ZIP
+
+- `dist/app.mjs`: interfaz y preferencias.
+- `dist/reader-core.mjs`: reproducción y fragmentación.
+- `dist/pdf-loader.mjs`: validación y extracción.
+- `dist/index.html` y `dist/styles.css`: interfaz.
+- `dist/vendor/pdfjs`: PDF.js 6.4.299 y activos.
+- `tests/`: pruebas de lógica, PDF y navegador.
+- `scripts/vendor-pdfjs.py`: actualización verificada de dependencias.
+
+## Privacidad y limitaciones
+
+El PDF se procesa localmente; algunas voces del sistema pueden requerir servicios en línea. Las preferencias y últimas posiciones se almacenan localmente, sin guardar los PDF. No incluye OCR, exportación MP3 ni sincronización entre dispositivos. La reproducción con la pantalla bloqueada no está garantizada.
+
+## Migración
+
+El ZIP original debe conservarse como fuente de verdad hasta comparar cada archivo y completar la carga. Ver `docs/MIGRACION.md` para el estado y las verificaciones pendientes.
