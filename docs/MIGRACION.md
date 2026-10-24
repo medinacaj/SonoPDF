@@ -15,28 +15,20 @@ node --test tests/*.test.mjs
 
 La ejecución valida el código descomprimido, **no** la copia parcial del repositorio.
 
-## Archivos publicados en GitHub
+## Carga completa (2026-10-24)
 
-- `README.md`: documentación actualizada para reflejar el desarrollo existente.
-- `.gitignore`
-- `dist/icon.svg`
-- `dist/reader-core.mjs`
-- `dist/vendor/pdfjs/VERSION`
+Todos los archivos del ZIP se copiaron al repositorio mediante transferencia directa (sin transcripción), conservando rutas y bytes. Única excepción deliberada: `README.md`, que mantiene la versión actualizada del repositorio.
 
-**Advertencia:** algunos archivos se cargaron anteriormente mediante transcripción, no transferencia binaria del ZIP. Deben compararse contra el original antes de dar la migración por concluida.
-
-## Archivos esenciales aún pendientes
-
-- `dist/index.html`
-- `dist/app.mjs`
-- `dist/styles.css`
-- `dist/pdf-loader.mjs`
-- `dist/vendor/pdfjs/legacy/build/pdf.mjs`
-- `dist/vendor/pdfjs/legacy/build/pdf.worker.mjs`
-- Los mapas CMap, fuentes, licencias y otros activos de PDF.js
-- `tests/`, `scripts/` y documentación técnica restante
+- Los archivos subidos antes por transcripción (`.gitignore`, `dist/icon.svg`, `dist/reader-core.mjs`, `dist/vendor/pdfjs/VERSION`) se compararon con el ZIP: **idénticos byte a byte**.
+- `diff -r` entre el ZIP descomprimido y el repositorio: sin diferencias (salvo `README.md`, `.github/` y este documento, propios del repositorio).
+- Pruebas sobre el repositorio: `node --test tests/*.test.mjs` → **28 aprobadas, 0 fallidas**.
+- Prueba de humo en Chromium (servidor estático sobre `dist/`): la página carga sin errores de consola y el ejemplo integrado muestra su texto.
+- PDF.js 6.4.299 incluye `LICENSE` (Apache 2.0), CMaps, fuentes estándar y WASM.
+- Búsqueda de secretos: ninguno encontrado.
 
 ## Criterios de aceptación
+
+Cumplidos: 1, 2, 3, 6 y, de forma básica, 4. Pendiente: 5 (verificación manual con PDF reales, voces, accesibilidad y vista móvil) y la decisión de desplegar.
 
 1. Comparar recursivamente el árbol de GitHub con el ZIP, preservando rutas y bytes.
 2. Evitar introducir secretos o archivos temporales.
