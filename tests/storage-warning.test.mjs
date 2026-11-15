@@ -11,6 +11,6 @@ test('un fallo de guardado del progreso muestra advertencia persistente y accesi
   assert.match(app, /function warnUnsaved\(\) \{ \$\('storage-warning'\)\.hidden = false; \}/);
   assert.match(app, /if \(!storage\.set\('avv-settings', settings\)\) warnUnsaved\(\)/);
   assert.match(app, /if \(!storage\.set\('avv-positions', recent\)\) warnUnsaved\(\)/);
-  assert.ok(!/function warnUnsaved\([\s\S]*?\{[\s\S]*?showMessage\(/.test(app),
-    'la advertencia no debe sobrescribir errores del lector');
+  const warningHandler = app.match(/function warnUnsaved\(\) \{([^}]*)\}/)?.[1] ?? '';
+  assert.doesNotMatch(warningHandler, /showMessage\(/, 'la advertencia no debe sobrescribir errores del lector');
 });
