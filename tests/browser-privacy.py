@@ -8,7 +8,7 @@ from playwright.sync_api import sync_playwright
 BASE = "http://127.0.0.1:8765/"
 
 def document(text: str) -> bytes:
-    stream = f"BT /F1 12 Tf 60 700 Td ({text}) Tj ET"
+    stream = f"BT /F1 12 Tf 60 700 Td ({text}) Tj ET" if text is not None else "0.9 g 70 650 150 40 re f"
     objects = [
         "<< /Type /Catalog /Pages 2 0 R >>",
         "<< /Type /Pages /Count 1 /Kids [4 0 R] >>",
@@ -56,6 +56,31 @@ with sync_playwright() as p:
         page.wait_for_function("document.querySelector('#reading-text')?.textContent?.includes('Hola SonoPDF')", timeout=30000)
         assert page.locator("#document-name").inner_text().strip()
         assert page.locator("#play").is_enabled() or page.locator("#speech-warning").is_visible()
+
+    # A damaged but correctly named PDF must report an error while retaining
+    # the last successfully opened document; no fake narration is generated.
+    with tempfile.TemporaryDirectory() as tmp:
+        broken = Path(tmp) / "archivo-danado.pdf"
+        broken.write_bytes(b"%PDF-1.7\\nbroken content\\n%%EOF")
+        page.locator("#file-input").set_input_files(str(broken))
+        page.locator("#message.error").wait_for(state="visible", timeout=30000)
+        assert page.locator("#document-name").inner_text() == "prueba-local.pdf"
+        assert "Hola SonoPDF" in page.locator("#reading-text").inner_text()
+
+        # A graphic-only PDF is readable as a document, but no OCR is claimed.
+        graphic = Path(tmp) / "pagina-sin-texto.pdf"
+        graphic.write_bytes(document(None))
+        page.locator("#file-input").set_input_files(str(graphic))
+        page.locator("#reading-text .blank-page").wait_for(state="visible", timeout=30000)
+        assert "no contiene texto seleccionable" in page.locator("#reading-text").inner_text().lower()
+        assert "OCR" in page.locator("#message").inner_text()
+        assert page.locator("#play").is_disabled()
+
+        empty = Path(tmp) / "archivo-vacio.pdf"
+        empty.write_bytes(b"")
+        page.locator("#file-input").set_input_files(str(empty))
+        assert "vacío" in page.locator("#message.error").inner_text()
+        assert page.locator("#document-name").inner_text() == "pagina-sin-texto.pdf"
 
     # PDF bytes stay in browser memory: network requests may load only app assets.
     escaped = [url for url in requests if urlparse(url).netloc != urlparse(BASE).netloc]

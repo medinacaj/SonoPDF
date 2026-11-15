@@ -2,7 +2,7 @@
 
 Aplicación web en español para escuchar documentos PDF desde móvil y ordenador. El código original de Codex usaba el nombre provisional «A viva voz»; el producto se llama **SonoPDF**.
 
-> **Estado de GitHub:** el repositorio contiene ya todos los archivos del ZIP original, verificados byte a byte, y las 28 pruebas pasan. Queda pendiente la verificación manual con PDF reales antes de desplegar.
+> **Estado de GitHub:** el repositorio contiene ya todos los archivos del ZIP original, verificados byte a byte, y las 28 pruebas pasan. Existen pruebas automatizadas de Chromium con PDF local y CI de Pages aprobada; todavía falta QA manual con archivos reales variados, tecnología asistiva y dispositivos físicos antes de considerar la accesibilidad y compatibilidad completas.
 
 ## Funciones presentes en el ZIP original
 
@@ -29,7 +29,7 @@ Abrir http://127.0.0.1:8765 en un navegador moderno.
 node --test
 ```
 
-**Verificación sobre el repositorio (24-10-2026): 28 pruebas aprobadas, 0 fallidas.**
+**Verificación:** suite Node y prueba Chromium con PDF local en GitHub Actions. Consultar la ejecución del commit vigente; no asumir que PDFs grandes, protegidos o escaneados han pasado un ensayo humano.
 
 ## Arquitectura del ZIP
 
