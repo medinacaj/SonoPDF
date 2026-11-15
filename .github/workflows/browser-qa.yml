@@ -1,5 +1,11 @@
 name: SonoPDF — browser QA and local-PDF privacy
 on:
+  push:
+    branches: [main]
+    paths:
+      - 'dist/**'
+      - 'tests/browser-privacy.py'
+      - '.github/workflows/browser-qa.yml'
   pull_request:
     branches: [main]
     paths:
