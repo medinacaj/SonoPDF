@@ -1,0 +1,30 @@
+name: SonoPDF — browser QA and local-PDF privacy
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'dist/**'
+      - 'tests/browser-privacy.py'
+      - '.github/workflows/browser-qa.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  browser-qa:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install Chromium test runner
+        run: |
+          python -m pip install "playwright==1.56.0"
+          python -m playwright install --with-deps chromium
+      - name: Verify real local PDF, accessibility basics and privacy
+        run: |
+          python -m http.server 8765 --bind 127.0.0.1 --directory dist >/tmp/sonopdf-browser.log 2>&1 &
+          server_pid=$!
+          trap 'kill "$server_pid" || true' EXIT
+          python tests/browser-privacy.py
