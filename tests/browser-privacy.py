@@ -14,17 +14,17 @@ def document(text: str) -> bytes:
         "<< /Type /Pages /Count 1 /Kids [4 0 R] >>",
         "<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>",
         "<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 3 0 R >> >> /Contents 5 0 R >>",
-        f"<< /Length {len(stream)} >>\\nstream\\n{stream}\\nendstream",
+        f"<< /Length {len(stream)} >>\nstream\n{stream}\nendstream",
     ]
-    data = "%PDF-1.7\\n"
+    data = "%PDF-1.7\n"
     offsets = [0]
     for idx, obj in enumerate(objects, start=1):
         offsets.append(len(data))
-        data += f"{idx} 0 obj\\n{obj}\\nendobj\\n"
+        data += f"{idx} 0 obj\n{obj}\nendobj\n"
     xref = len(data)
-    data += f"xref\\n0 {len(objects) + 1}\\n0000000000 65535 f \\n"
-    data += "".join(f"{offset:010d} 00000 n \\n" for offset in offsets[1:])
-    data += f"trailer\\n<< /Size {len(objects) + 1} /Root 1 0 R >>\\nstartxref\\n{xref}\\n%%EOF"
+    data += f"xref\n0 {len(objects) + 1}\n0000000000 65535 f \n"
+    data += "".join(f"{offset:010d} 00000 n \n" for offset in offsets[1:])
+    data += f"trailer\n<< /Size {len(objects) + 1} /Root 1 0 R >>\nstartxref\n{xref}\n%%EOF"
     return data.encode("latin-1")
 
 with sync_playwright() as p:
@@ -53,7 +53,7 @@ with sync_playwright() as p:
         file.write_bytes(document("Hola SonoPDF"))
         page.locator("#file-input").set_input_files(str(file))
         page.locator("#reader").wait_for(state="visible", timeout=30000)
-        assert "Hola SonoPDF" in page.locator("#reading-text").inner_text()
+        page.wait_for_function("document.querySelector('#reading-text')?.textContent?.includes('Hola SonoPDF')", timeout=30000)
         assert page.locator("#document-name").inner_text().strip()
         assert page.locator("#play").is_enabled() or page.locator("#speech-warning").is_visible()
 
