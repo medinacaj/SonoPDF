@@ -4,7 +4,7 @@ import { readPdf, validatePdf } from './pdf-loader.mjs';
 const $ = id => document.getElementById(id);
 const storage = {
   get(key, fallback) { try { return JSON.parse(localStorage.getItem(key)) ?? fallback; } catch { return fallback; } },
-  set(key, value) { try { localStorage.setItem(key, JSON.stringify(value)); } catch { /* Reading works without storage. */ } },
+  set(key, value) { try { localStorage.setItem(key, JSON.stringify(value)); return true; } catch { return false; } },
 };
 const rawSettings = storage.get('avv-settings', {});
 const settings = { rate: [0.5,0.75,1,1.25,1.5,1.75,2].includes(rawSettings?.rate) ? rawSettings.rate : 1,
@@ -36,14 +36,15 @@ function showMessage(text, kind = '') {
   $('message').className = `message ${kind}`;
   $('message').hidden = !text;
 }
-function saveSettings() { storage.set('avv-settings', settings); }
+function warnUnsaved() { $('storage-warning').hidden = false; }
+function saveSettings() { if (!storage.set('avv-settings', settings)) warnUnsaved(); }
 function savePosition() {
   if (!currentDoc || currentDoc.isDemo) return;
   const stored = storage.get('avv-positions', {});
   const positions = stored && typeof stored === 'object' && !Array.isArray(stored) ? stored : {};
   positions[currentDoc.fingerprint] = { index: player.index, page: visiblePage, completed: player.status === 'ended', at: Date.now() };
   const recent = Object.fromEntries(Object.entries(positions).sort((a,b) => (b[1]?.at || 0) - (a[1]?.at || 0)).slice(0,30));
-  storage.set('avv-positions', recent);
+  if (!storage.set('avv-positions', recent)) warnUnsaved();
 }
 const formatRate = rate => `${String(rate).replace('.', ',')}×`;
 function formatTime(seconds) {
