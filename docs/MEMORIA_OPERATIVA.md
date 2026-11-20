@@ -1,26 +1,22 @@
-# SonoPDF — continuidad operativa
+# SonoPDF — memoria operativa vigente
 
+**Revisión de continuidad:** 2026-11-20. **Fuente única:** este repositorio. Estado histórico de 19/11 conservado en el historial de Git y documentos de antecedentes, no es una instrucción activa.
 
-## Continuidad autónoma — 2026-11-20
+## Orden para continuar
 
-**Fuente oficial:** [DECISIONES.md](DECISIONES.md), documentación funcional, issues, PR y commits de **este repositorio**. El historial posterior prevalece sobre el hito del 19/11/2026 anotado más abajo. Ningún paso depende de `ai-project-control`.
+1. Leer [DECISIONES.md](DECISIONES.md) y [CRITERIOS_FUNCIONALIDAD_REAL_Y_FIXTURES.md](CRITERIOS_FUNCIONALIDAD_REAL_Y_FIXTURES.md).
+2. Consultar [ESTADO_GITHUB_AUTO.md](ESTADO_GITHUB_AUTO.md), [issue #2](https://github.com/medinacaj/SonoPDF/issues/2), PR/ramas/commits y CI **en vivo**. El snapshot puede estar desactualizado.
+3. Distinguir código implementado de CI aprobada y de despliegue real; no inventar pruebas ni porcentajes.
+4. Continuar el último bloqueo real. Al finalizar registrar fecha, PR/SHA, pruebas, entorno verificado, pendientes y siguiente acción en este repositorio.
 
-- Recuperar el problema activo del issue [#2](https://github.com/medinacaj/SonoPDF/issues/2) y la rama/PR vigente. El workflow local de estado es un indicador, no prueba de hosting.
-- Mantener cada decisión específica y su cambio aprobado dentro de `docs/DECISIONES.md`; no copiar versiones divergentes a un registro central.
-- Al cerrar un trabajo: fecha, tarea, PR, SHA, pruebas/CI del SHA, entorno realmente verificado, bloqueo y siguiente acción.
-- **Regla de seguridad:** no fusionar, desplegar ni habilitar operaciones reales por el resultado de una demo. Respetar fixtures sintéticos, roles, backups y permisos.
+## Decisiones y bloqueo de referencia
 
-**Alcance:** registro de continuidad del repositorio. No contiene credenciales, datos de clientes ni decisiones de otros productos.
+**[CONFIRMADO]** Preservar el procesamiento local de PDF cuando esté implementado y probado. Evitar enviar documentos privados al servidor sin necesidad técnica y permiso.
 
-## Orden de recuperación
-1. Consultar instrucciones y decisiones existentes en este repositorio, incluyendo AGENTS.md y documentos específicos si existen; no sustituirlos.
-2. Consultar [ESTADO_GITHUB_AUTO.md](ESTADO_GITHUB_AUTO.md), PR, SHA, issues y CI vivos. El snapshot puede estar desactualizado.
-3. Continuar el bloqueo específico del issue [#2](https://github.com/medinacaj/SonoPDF/issues/2), tras verificar su estado actual.
-4. Registrar aquí fecha, SHA, pruebas, entorno realmente verificado, bloqueo y siguiente acción tras cada trabajo.
+**[PENDIENTE DE REVISIÓN]** Validar issue #2, auditoría y pruebas actuales; no exigir backend por defecto para funciones locales.
 
-## Hito de continuidad — 2026-11-19
-- **[IMPLEMENTADO SIN VALIDAR]** Workflow de snapshot GitHub por eventos y cron en rama `chore/project-memory-sync-20261119`, pendiente de CI y revisión.
-- **[PENDIENTE]** Confirmar las prioridades del producto con issue, PR y código actuales antes de tocar funcionalidad.
-- **[PENDIENTE]** Fusionar piloto únicamente tras pruebas, comprobar archivo generado en rama predeterminada y registrar SHA de ejecución.
-- **Entorno:** GitHub. Ningún hosting, despliegue o base de datos ha sido verificado ni modificado.
-- **Siguiente acción:** validar PR de memoria y después comprobar sincronización por evento.
+**Siguiente acción:** comprobar el bloqueo más reciente de #2 y corregirlo con evidencia reproducible.
+
+## Independencia
+
+Ningún paso requiere consultar, sincronizar o actualizar un repositorio central de coordinación. Las decisiones explícitas posteriores del propietario prevalecen y se documentan aquí. Las acciones automáticas solo actualizan metadatos; no sobrescriben decisiones ni inventan estados de producción.
