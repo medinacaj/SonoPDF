@@ -1,5 +1,15 @@
 # SonoPDF — continuidad operativa
 
+
+## Continuidad autónoma — 2026-11-20
+
+**Fuente oficial:** [DECISIONES.md](DECISIONES.md), documentación funcional, issues, PR y commits de **este repositorio**. El historial posterior prevalece sobre el hito del 19/11/2026 anotado más abajo. Ningún paso depende de `ai-project-control`.
+
+- Recuperar el problema activo del issue [#2](https://github.com/medinacaj/SonoPDF/issues/2) y la rama/PR vigente. El workflow local de estado es un indicador, no prueba de hosting.
+- Mantener cada decisión específica y su cambio aprobado dentro de `docs/DECISIONES.md`; no copiar versiones divergentes a un registro central.
+- Al cerrar un trabajo: fecha, tarea, PR, SHA, pruebas/CI del SHA, entorno realmente verificado, bloqueo y siguiente acción.
+- **Regla de seguridad:** no fusionar, desplegar ni habilitar operaciones reales por el resultado de una demo. Respetar fixtures sintéticos, roles, backups y permisos.
+
 **Alcance:** registro de continuidad del repositorio. No contiene credenciales, datos de clientes ni decisiones de otros productos.
 
 ## Orden de recuperación
